@@ -1,0 +1,11 @@
+{
+	"ID": "c6595e2f486bdae2df7711a36a9f05ca",
+	"TypeName": "FlaxEngine.LocalizedStringTable",
+	"EngineBuild": 6705,
+	"Data": {
+	"Locale": "en",
+	"Entries": {
+		"AutoSave": "Auto Save"
+	}
+}
+}

@@ -1,0 +1,292 @@
+{
+	"ID": "fdc6612449ad7015339c4cad02204c09",
+	"TypeName": "FlaxSave.SavableGraphics",
+	"EngineBuild": 6705,
+	"Data": {
+	"PostProcessSettings": {
+		"AO": {
+			"OverrideFlags": 0,
+			"Enabled": false,
+			"Intensity": 0.0,
+			"Power": 0.0,
+			"Radius": 0.0,
+			"FadeOutDistance": 0.0,
+			"FadeDistance": 0.0
+		},
+		"GI": {
+			"OverrideFlags": 0,
+			"Mode": 0,
+			"Intensity": 0.0,
+			"BounceIntensity": 0.0,
+			"TemporalResponse": 0.0,
+			"Distance": 0.0,
+			"FallbackIrradiance": {
+				"R": 0.0,
+				"G": 0.0,
+				"B": 0.0,
+				"A": 0.0
+			}
+		},
+		"Bloom": {
+			"OverrideFlags": 0,
+			"Enabled": false,
+			"Intensity": 0.0,
+			"Threshold": 0.0,
+			"ThresholdKnee": 0.0,
+			"Clamp": 0.0,
+			"BaseMix": 0.0,
+			"HighMix": 0.0
+		},
+		"ToneMapping": {
+			"OverrideFlags": 0,
+			"WhiteTemperature": 0.0,
+			"WhiteTint": 0.0,
+			"Mode": 0
+		},
+		"ColorGrading": {
+			"OverrideFlags": 0,
+			"ColorSaturation": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorContrast": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorGamma": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorGain": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorOffset": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorSaturationShadows": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorContrastShadows": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorGammaShadows": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorGainShadows": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorOffsetShadows": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorSaturationMidtones": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorContrastMidtones": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorGammaMidtones": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorGainMidtones": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorOffsetMidtones": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorSaturationHighlights": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorContrastHighlights": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorGammaHighlights": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorGainHighlights": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ColorOffsetHighlights": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0,
+				"W": 0.0
+			},
+			"ShadowsMax": 0.0,
+			"HighlightsMin": 0.0,
+			"LutTexture": null,
+			"LutWeight": 0.0
+		},
+		"EyeAdaptation": {
+			"OverrideFlags": 0,
+			"Mode": 0,
+			"SpeedUp": 0.0,
+			"SpeedDown": 0.0,
+			"PreExposure": 0.0,
+			"PostExposure": 0.0,
+			"MinBrightness": 0.0,
+			"MaxBrightness": 0.0,
+			"HistogramLowPercent": 0.0,
+			"HistogramHighPercent": 0.0
+		},
+		"CameraArtifacts": {
+			"OverrideFlags": 0,
+			"VignetteIntensity": 0.0,
+			"VignetteColor": {
+				"X": 0.0,
+				"Y": 0.0,
+				"Z": 0.0
+			},
+			"VignetteShapeFactor": 0.0,
+			"GrainAmount": 0.0,
+			"GrainParticleSize": 0.0,
+			"GrainSpeed": 0.0,
+			"ChromaticDistortion": 0.0,
+			"ScreenFadeColor": {
+				"R": 0.0,
+				"G": 0.0,
+				"B": 0.0,
+				"A": 0.0
+			}
+		},
+		"LensFlares": {
+			"OverrideFlags": 0,
+			"Intensity": 0.0,
+			"Ghosts": 0,
+			"HaloWidth": 0.0,
+			"HaloIntensity": 0.0,
+			"GhostDispersal": 0.0,
+			"Distortion": 0.0,
+			"ThresholdBias": 0.0,
+			"ThresholdScale": 0.0,
+			"LensDirt": null,
+			"LensDirtIntensity": 0.0,
+			"LensColor": null,
+			"LensStar": null
+		},
+		"DepthOfField": {
+			"OverrideFlags": 0,
+			"Enabled": false,
+			"BlurStrength": 0.0,
+			"FocalDistance": 0.0,
+			"FocalRegion": 0.0,
+			"NearTransitionRange": 0.0,
+			"FarTransitionRange": 0.0,
+			"DepthLimit": 0.0,
+			"BokehEnabled": false,
+			"BokehSize": 0.0,
+			"BokehBrightness": 0.0,
+			"BokehShape": 0,
+			"BokehShapeCustom": null,
+			"BokehBrightnessThreshold": 0.0,
+			"BokehBlurThreshold": 0.0,
+			"BokehFalloff": 0.0,
+			"BokehDepthCutoff": 0.0
+		},
+		"MotionBlur": {
+			"OverrideFlags": 0,
+			"Enabled": false,
+			"Scale": 0.0,
+			"SampleCount": 0,
+			"MotionVectorsResolution": 0
+		},
+		"SSR": {
+			"OverrideFlags": 0,
+			"Intensity": 0.0,
+			"TraceMode": 0,
+			"DepthResolution": 0,
+			"RayTracePassResolution": 0,
+			"BRDFBias": 0.0,
+			"RoughnessThreshold": 0.0,
+			"WorldAntiSelfOcclusionBias": 0.0,
+			"ResolvePassResolution": 0,
+			"ResolveSamples": 0,
+			"EdgeFadeFactor": 0.0,
+			"FadeOutDistance": 0.0,
+			"FadeDistance": 0.0,
+			"UseColorBufferMips": false,
+			"TemporalEffect": false,
+			"TemporalScale": 0.0,
+			"TemporalResponse": 0.0
+		},
+		"AA": {
+			"OverrideFlags": 0,
+			"Mode": 0,
+			"TAA_JitterSpread": 0.0,
+			"TAA_Sharpness": 0.0,
+			"TAA_StationaryBlending": 0.0,
+			"TAA_MotionBlending": 0.0,
+			"CAS_SharpeningAmount": 0.0,
+			"CAS_EdgeSharpening": 0.0,
+			"CAS_MinEdgeThreshold": 0.0,
+			"CAS_OverBlurLimit": 0.0
+		},
+		"PostFxMaterials": {
+			"Materials": null
+		}
+	},
+	"AAQuality": 0,
+	"GIQuality": 0,
+	"GlobalSDFQuality": 0,
+	"ShadowMapsQuality": 0,
+	"SSAOQuality": 0,
+	"SSRQuality": 0,
+	"VolumetricFogQuality": 0,
+	"AllowCSMBlending": false,
+	"GICascadesBlending": false,
+	"UseVSync": false
+}
+}

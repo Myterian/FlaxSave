@@ -1,0 +1,13 @@
+{
+	"ID": "2f11cf6643026cb2a3b51fa100f45a67",
+	"TypeName": "byteslider.SaveSystem.SaveSettings",
+	"EngineBuild": 6705,
+	"Data": {
+	"SaveVersion": "0.1.9",
+	"AutoSaving": true,
+	"AutoSaveInterval": 300000,
+	"IsPortable": false,
+	"DebugInfo": false,
+	"DiskType": 8
+}
+}
