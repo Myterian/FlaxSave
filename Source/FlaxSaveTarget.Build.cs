@@ -9,5 +9,6 @@ public class FlaxSaveTarget : GameProjectTarget
 
         // Reference the modules for game
         Modules.Add("FlaxSave");
+        Modules.Add("FlaxSaveExamples");
     }
 }
