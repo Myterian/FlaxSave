@@ -27,13 +27,10 @@ public class SaveManager : GamePlugin
     public FlaxSaveSettings SaveSettings => saveSettings ??= GameSettings.Load<FlaxSaveSettings>() ?? new();
 
     private static SaveManager instance;
-
     private FlaxSaveSettings saveSettings;
 
     private object saveLock = new();
-
     private float nextAutoSave = float.MaxValue;
-
     private bool isActiveTaskRunning = false;
 
 
@@ -390,8 +387,8 @@ public class SaveManager : GamePlugin
     {
         _description = new()
         {
-            Name = "FlaxSave Runtime",
-            Description = "A ready-to-use, component based save system for the Flax Engine",
+            Name = "FlaxSave",
+            Description = "A modular, component based save system for the Flax Engine",
             Category = "FlaxSave",
             Author = "Thomas Jungclaus",
             AuthorUrl = "https://github.com/Myterian/",
