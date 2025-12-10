@@ -1,4 +1,5 @@
-﻿// © 2025 byteslider UG. All rights reserved.
+﻿// Copyright © 2025 Thomas Jungclaus. All rights reserved. Released under the MIT License.
+
 #if FLAX_EDITOR
 
 using System;

@@ -1,4 +1,4 @@
-﻿// © 2025 byteslider UG. All rights reserved.
+﻿// Copyright © 2025 Thomas Jungclaus. All rights reserved. Released under the MIT License.
 
 using FlaxEngine;
 
@@ -55,23 +55,15 @@ public class SavableGraphics : ISavableAsset
         Graphics.UseVSync = UseVSync;
         Graphics.VolumetricFogQuality = VolumetricFogQuality;
 
-        
-        
+
+
 
         Screen.Size = ScreenSize;
         Screen.GameWindowMode = GameWindowMode;
 
-        if(GameWindowMode != GameWindowMode.Fullscreen && GameWindowMode != GameWindowMode.FullscreenBorderless)
+        if (GameWindowMode != GameWindowMode.Fullscreen && GameWindowMode != GameWindowMode.FullscreenBorderless)
             Screen.MainWindow.Position = Platform.GetMonitorBounds(Screen.MainWindow.Position).Center - (ScreenSize / 2f);
-        // GPUDevice.Instance.VideoOutputs[0].Name
-        // GPUDevice.Instance.VideoOutputModes[0].VideoOutputIndex
         
-        // Platform.Info("Yehaw ihr splasher");
-
-        // Screen.MainWindow.Hide();
-
-        // Engine.MainWindow
-        
-        
+        // TODO: Put game window on correct monitor
     }
 }

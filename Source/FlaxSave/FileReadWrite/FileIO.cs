@@ -1,4 +1,4 @@
-﻿// © 2025 byteslider UG. All rights reserved.
+﻿// Copyright © 2025 Thomas Jungclaus. All rights reserved. Released under the MIT License.
 
 using System.IO;
 using System.Threading.Tasks;

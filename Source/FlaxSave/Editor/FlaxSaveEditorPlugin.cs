@@ -1,11 +1,10 @@
-﻿// © 2025 byteslider UG. All rights reserved.
+﻿// Copyright © 2025 Thomas Jungclaus. All rights reserved. Released under the MIT License.
+
 #if FLAX_EDITOR
 
 using FlaxEditor;
 
-
 namespace FlaxSave;
-
 
 public class FlaxSaveEditorPlugin : EditorPlugin
 {
@@ -35,6 +34,7 @@ public class FlaxSaveEditorPlugin : EditorPlugin
             Description = "Editor Assets for FlaxSave",
             Author = "Thomas Jungclaus",
             AuthorUrl = "https://github.com/Myterian/",
+            RepositoryUrl = "https://github.com/Myterian/FlaxSave/",
             Category = "FlaxSave",
             IsAlpha = false,
             IsBeta = false,
