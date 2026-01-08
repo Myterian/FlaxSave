@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using FlaxEditor.Content.Settings;
 using FlaxEngine;
 
 namespace FlaxSave;
@@ -58,9 +59,16 @@ public class FlaxSaveSettings : FlaxEditor.Content.Settings.SettingsBase
     [HideInEditor]
     public Version SavegameVersion => savegameVersion;
 
+#if FLAX_EDITOR
+    /// <summary>Directory path for savegames</summary>
+    [HideInEditor]
+    public string SavegameDirectory => saveDir ??= Path.Combine(Globals.ProductLocalFolder, GameSettings.Load().ProductName);
+#else
     /// <summary>Directory path for savegames</summary>
     [HideInEditor]
     public string SavegameDirectory => saveDir ??= Globals.ProductLocalFolder;
+#endif
+    
 
     /// <summary>Full file path to the meta file</summary>
     [HideInEditor]
