@@ -3,8 +3,9 @@
 using System;
 using System.Collections.Generic;
 using FlaxEngine;
+using FlaxSave;
 
-namespace FlaxSave;
+namespace FlaxSaveExamples;
 
 /// <summary>Savable Component Base</summary>
 public class Savable : Script
@@ -40,19 +41,14 @@ public class Savable : Script
         saveManager.OnSaving -= SaveAction;
         saveManager.OnSaving += SaveAction;
 
-        saveManager.OnLoaded -= LoadAction;
-        saveManager.OnLoaded += LoadAction;
-
         LoadAction(saveManager.ActiveSaveData);
     }
 
     public override void OnDisable()
     {
         base.OnDisable();
-        saveManager ??= SaveManager.Instance;
 
         saveManager.OnSaving -= SaveAction;
-        saveManager.OnLoaded -= LoadAction;
     }
     
 }

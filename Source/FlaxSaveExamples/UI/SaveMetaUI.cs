@@ -4,8 +4,9 @@ using System;
 using System.Text;
 using FlaxEngine;
 using FlaxEngine.GUI;
+using FlaxSave;
 
-namespace FlaxSave;
+namespace FlaxSaveExamples;
 
 /// <summary>
 /// SaveMetaUI Script.

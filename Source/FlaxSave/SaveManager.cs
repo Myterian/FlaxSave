@@ -26,6 +26,8 @@ public class SaveManager : GamePlugin
     /// <summary>The save settings instance that is in use by the save system</summary>
     public FlaxSaveSettings SaveSettings => saveSettings ??= GameSettings.Load<FlaxSaveSettings>() ?? new();
 
+    public bool IsDuringTask => isActiveTaskRunning;
+
     private static SaveManager instance;
     private FlaxSaveSettings saveSettings;
 
@@ -41,7 +43,7 @@ public class SaveManager : GamePlugin
     public event Action OnSaved;
 
     /// <summary>Event for when reading a savegame from disk is done. Used for setting actors and others in the scene to the saved state.</summary>
-    public event Action<Dictionary<Guid, string>> OnLoaded;
+    public event Action OnLoaded;
 
     private Task workerTask = null;
     private Func<Task> pendingGameSave = null;
@@ -150,6 +152,17 @@ public class SaveManager : GamePlugin
         lock (saveLock)
         {
             ActiveSaveData[id] = content;
+        }
+    }
+
+    /// <summary>Gets savegame data for a component.</summary>
+    /// <param name="id">The id of the component</param>
+    /// <returns>string, in json format</returns>
+    public string GetSaveData(Guid id)
+    {
+        lock (saveLock)
+        {
+            return ActiveSaveData[id];
         }
     }
 
@@ -277,11 +290,12 @@ public class SaveManager : GamePlugin
         {
             IOOpertation saveIO = new() { Path = SaveSettings.GetSaveFilePath(saveName) };
             Dictionary<Guid, string> readTask = await FileIO.ReadFromDisk<Dictionary<Guid, string>>(saveIO);
+            ActiveSaveData = readTask;
 
             Scripting.InvokeOnUpdate(() =>
             {
-                ActiveSaveData = readTask;
-                OnLoaded?.Invoke(readTask);
+                // ActiveSaveData = readTask;
+                OnLoaded?.Invoke();
             });
         }
         catch (Exception ex) { Debug.LogException(ex); }
@@ -349,7 +363,7 @@ public class SaveManager : GamePlugin
 
                     lock (saveLock)
                     {
-                        taskToRun = Take(ref pendingSettingSave)
+                        taskToRun =    Take(ref pendingSettingSave)
                                     ?? Take(ref pendingSettingLoad)
                                     ?? Take(ref pendingGameSave)
                                     ?? Take(ref pendingGameLoad)

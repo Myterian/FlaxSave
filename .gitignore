@@ -17,3 +17,6 @@ Source/obj/
 Source/FlaxSave/DiskUtilities/
 Source/*.Gen.cs
 Source/*.csproj
+
+ImagesWIP/
+Icon/
