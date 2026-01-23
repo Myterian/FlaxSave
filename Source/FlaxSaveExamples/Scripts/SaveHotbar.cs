@@ -5,9 +5,7 @@ using FlaxSave;
 
 namespace FlaxSaveExamples;
 
-/// <summary>
-/// SaveHotbar Script.
-/// </summary>
+/// <summary>Example for quick-save and quick-load setup</summary>
 public class SaveHotbar : Script
 {
     private SaveManager saveManager = null;
@@ -15,19 +13,43 @@ public class SaveHotbar : Script
     /// <inheritdoc/>
     public override void OnUpdate()
     {
-        if (Input.GetKeyDown(KeyboardKeys.I))
-            (saveManager ??= SaveManager.Instance).RequestGameSave();
+        // Saves the current game state
+        if (Input.GetKeyDown(KeyboardKeys.F7))
+            saveManager.RequestGameSave();
 
-        // if (Input.GetKeyDown(KeyboardKeys.O))
-        //     (saveManager ??= SaveManager.Instance).RequestGameLoad();
+        // Loads the latest savegame and reloads all scenes. Savegames have to be loaded
+        // before everything else. Make sure the savegame is available before
+        // a script or an actor is initialized.
+        if (Input.GetKeyDown(KeyboardKeys.F8))
+        {
+            saveManager.RequestGameLoad(saveManager.SaveMetas[^1].SaveName);
+            ReloadScenes(Level.Scenes);
+        }
 
-        if (Input.GetKeyDown(KeyboardKeys.U))
-            (saveManager ??= SaveManager.Instance).RequestSettingsSave();
+        // Saves assets to disk
+        if (Input.GetKeyDown(KeyboardKeys.F9))
+            saveManager.RequestAssetsSave();
 
-        if (Input.GetKeyDown(KeyboardKeys.Spacebar))
-            (saveManager ??= SaveManager.Instance).RequestSettingsLoad();
+        // Loads assets from disk
+        if (Input.GetKeyDown(KeyboardKeys.F10))
+            saveManager.RequestAssetsLoad();
 
-        if (Input.GetKeyDown(KeyboardKeys.T))
-            (saveManager ??= SaveManager.Instance).OpenSaveDirectory();
+        if (Input.GetKeyDown(KeyboardKeys.Backspace))
+            saveManager.OpenSaveDirectory();
     }
+
+    private void ReloadScenes(Scene[] scenes)
+    {        
+        Level.UnloadAllScenes();
+
+        for (int i = 0; i < scenes.Length; i++)
+            Level.LoadScene(scenes[i].ID);
+    }
+
+    public override void OnEnable()
+    {
+        base.OnEnable();
+        saveManager = SaveManager.Instance;
+    }
+
 }

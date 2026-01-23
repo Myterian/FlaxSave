@@ -56,9 +56,6 @@ public class SavableGraphics : ISavableAsset
         Graphics.UseVSync = UseVSync;
         Graphics.VolumetricFogQuality = VolumetricFogQuality;
 
-
-
-
         Screen.Size = ScreenSize;
         Screen.GameWindowMode = GameWindowMode;
 

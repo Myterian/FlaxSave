@@ -1,5 +1,5 @@
-# FlaxSave - Component based save system for the Flax Engine
 ![image](Images/Preview.jpg)
+## FlaxSave - A component based save system for the Flax Engine
 
 #### Table of Content
 1. [What is FlaxSave?](#what-is-flaxsave)
@@ -7,9 +7,8 @@
 3. [Features](#features)
 4. [Examples](#examples)
 5. [Documentation](#documentation)
-6. [Planned Features](#planned-features)
-7. [Installation](#installation)
-8. [Known Issues](#known-issues)
+6. [Installation](#installation)
+7. [Known Issues](#known-issues)
 
 
 ## What is FlaxSave?
@@ -19,18 +18,19 @@ The system is designed to be simple to integrate for projects ranging from quick
 
 
 ## How it works
+![image](Images/Flow.jpg)
+
 Instead of requiring actors and scripts to implement a specifc interface or base class, saving and loading is handled thru events and simple api, available in a central `SaveManager`. Game code can use to these events and apis to handle serialization in a way that fits the project.
 
 While not mandatory, the intended workflow is that each persistable actor owns a dedicated script subscribed to the save event, that reads serialized data on initilization. These scripts are responsible for capturing and restoring the actors state in a self contained fashion.
 
 This design allows for incremental integration into a project, without the need to refactor existing code. It allows save and load logic to remain fully project specific, without framework level restrictions.
 
-![image](Images/Flow.jpg)
 
 ## Features
 - Persistent save data across scenes and sessions
 - Event-driven, decoupled save and load logic
-- Component-based object state saving
+- Component-based object, self contained state handling
 - Asynchronous save operations to avoid frame stalls
 - JSON-based save files with configurable file extension
 - Unlimited save slots (storage limited only by disk space)
@@ -41,8 +41,9 @@ This design allows for incremental integration into a project, without the need 
 
 
 ## Examples
-The following examples are included and reusable:
-- **SavableTransform** A script that saves and loads the transform of an actor
+The following examples are included:
+- **SavableTransform** A simple script that saves and loads the transform of an actor
+- **SavablePlayerStats** An advanced script, that saves and loads various player stats
 - **SaveHotbar** A script that dispatches saving and loading via button press
 - **SavableAssets** Various JSON-Asset classes that save and load engine settings
 - **User Interface** Scripts for a dynamic savegame list for in-game use

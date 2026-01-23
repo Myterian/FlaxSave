@@ -64,9 +64,9 @@ public class SaveManager : GamePlugin
 
 #if FLAX_EDITOR
         if (!SaveSettings.SkipLoadingSettingsInEditor)
-            RequestSettingsLoad();
+            RequestAssetsLoad();
 #else
-        RequestSettingsLoad();
+        RequestAssetsLoad();
 #endif
 
         SetAutoSaveActive(SaveSettings.AutoSave);
@@ -102,8 +102,8 @@ public class SaveManager : GamePlugin
         }
     }
 
-    /// <summary>Start saving the settings as defined in SaveSettings to disk right away or at the next possible opening, if a save/load operation is already happening</summary>
-    public void RequestSettingsSave()
+    /// <summary>Start saving the assets as defined in SaveSettings to disk right away or at the next possible opening, if a save/load operation is already happening</summary>
+    public void RequestAssetsSave()
     {
         lock (saveLock)
         {
@@ -123,8 +123,8 @@ public class SaveManager : GamePlugin
         }
     }
 
-    /// <summary>Starts loading the settings from disk right away or at the next possible opening, if a save/load operation is already happening</summary>
-    public void RequestSettingsLoad()
+    /// <summary>Starts loading the assets from disk right away or at the next possible opening, if a save/load operation is already happening</summary>
+    public void RequestAssetsLoad()
     {
         lock (saveLock)
         {
