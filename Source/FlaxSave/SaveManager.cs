@@ -142,7 +142,10 @@ public class SaveManager : GamePlugin
         }
     }
 
-    /// <summary>Sets savegame data for a component. This is useful, when a save component gets disabled and we want to update its data for the next time the game gets saved.</summary>
+    /// <summary>
+    /// Provides thread-safe write access to the savegame data for a component. 
+    /// This is useful, when a save component gets disabled and we want to update its data for the next time the game gets saved.
+    /// </summary>
     /// <param name="id">The id of the component</param>
     /// <param name="content">The data to save</param>
     public void SetSaveData(Guid id, string content)
@@ -150,6 +153,17 @@ public class SaveManager : GamePlugin
         lock (saveLock)
         {
             ActiveSaveData[id] = content;
+        }
+    }
+
+    /// <summary>Provides thread-safe access to the savegame data for a component</summary>
+    /// <param name="id">The id of the component</param>
+    /// <returns>string, in json format</returns>
+    public string GetSaveData(Guid id)
+    {
+        lock (saveLock)
+        {
+            return ActiveSaveData[id];
         }
     }
 
