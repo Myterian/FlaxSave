@@ -1,9 +1,8 @@
 ﻿// Copyright © 2025 Thomas Jungclaus. All rights reserved. Released under the MIT License.
 
 using FlaxEngine;
-using FlaxSave;
 
-namespace FlaxSaveExamples;
+namespace FlaxSave;
 
 /// <summary>Class to use in a Json Asset for saving and loading Graphics and Video settings at runtime</summary>
 public class SavableGraphics : ISavableAsset

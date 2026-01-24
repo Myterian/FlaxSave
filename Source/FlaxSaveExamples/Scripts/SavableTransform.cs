@@ -4,77 +4,77 @@ using System;
 using System.Collections.Generic;
 using FlaxEngine;
 using FlaxEngine.Json;
-using FlaxSave;
 
-namespace FlaxSaveExamples;
+namespace FlaxSave;
 
 /// <summary>Saves and Loads transform data of an actor</summary>
-public class SavableTransform : Script
+public class SavableTransform : Savable
 {
-    // This example demonstrates a save setup for an actor's transform.
-    //
-    // Loading data from a savegame is best done during the scripts initilization (OnEnable or OnStart).
-    // At this point the savegame is should already loaded and available via the SaveManager.
-    // This approach ensures that dynamically spawned objects can restore their state, because
-    // no loading events are missed due to timing or lifecycle order.
-    //
-    // Saving, on the other hand, is event driven and happens during SaveManager.OnSaving,
-    // right before the savegame is written to disk.
-    //
-    // Fun fact: Without the comments, this scripts would be ~45 lines long.
+    // Used for comparison of transforms in the SaveCondition method.
+    [ShowInEditor, ReadOnly] private Transform saveDataTransform = Transform.Identity;
 
 
-    /// <summary>Serializes the current transform and write it to the savegame</summary>
-    /// <param name="savegame">The active savegame data container provided by the SaveManager.OnSaving event</param>
-    public void SaveAction(Dictionary<Guid, string> savegame)
+    /// <summary>Serializes relevant data and adds it to the savegame</summary>
+    /// <param name="savegame">Active savegame data</param>
+    public override void SaveAction(Dictionary<Guid, string> savegame)
     {
-        // Savegame files are Json-based, so the first step is to serialize the transform to json
-        string data = JsonSerializer.Serialize(Actor.Transform);
+        // Skip if transform hasn't changed
+        if (!SaveCondition())
+            return;
 
-        // Add or update the savegame entry for this object using its unique ID
+        // Create new data
+        saveDataTransform = Actor.Transform;
+        string data = JsonSerializer.Serialize(saveDataTransform);
+
+        // Here we add (or update) the data we want to save to the concurrent dictionary. 
+        // A concurrent dictionary like a regular dictionary with a <key, value> pair, but with an extra func to get the data.
+        // 
+        // 1.   ID is the ID of this Flax Object and the key in the dict. Flax assignes unique ids to every FlaxObject. ID is undeniably this script.
+        // 2.   data is the json data we want to save and the value in the dict. Here it's the transform of this actor.
+        // 3.   Third parameter is a func(Guid, string) that either adds or updates an existing key (Guid) with a value (string).
+        //      For custom save components, copy and pasting this should be fine.
+        // savegame.AddOrUpdate(ID, data, (key, value) => data);
         savegame[ID] = data;
     }
 
-
-    public override void OnEnable()
+    /// <summary>Gets relevant data from the active savegame</summary>
+    /// <param name="savegame">The savegame to read form</param>
+    public override void LoadAction(Dictionary<Guid, string> savegame)
     {
-        base.OnEnable();
-
-        // Subscribe to the save event. This event is dispatched during manual or auto-save,
-        // when all active objects are asked to provide their save data.
-        SaveManager.Instance.OnSaving += SaveAction;
-
-        // Load state from the currently loaded savegame. At this point the savegame should
-        // already be loaded and stored inside the SaveManager.
-        string savedData = SaveManager.Instance.GetSaveData(ID);
-
-        if (string.IsNullOrEmpty(savedData))
+        // Make sure we have data saved
+        if (!savegame.ContainsKey(ID))
             return;
 
-        Transform savedTransform = JsonSerializer.Deserialize<Transform>(savedData);
-        Actor.Transform = savedTransform;
+        // Deserialize transform from dictonary
+        string data = savegame[ID];
+        Transform newTransform = JsonSerializer.Deserialize<Transform>(data);
+
+        // Apply
+        Actor.Transform = newTransform;
+        saveDataTransform = newTransform;
     }
 
+    /// <summary>Condition for when to save or skip</summary>
+    /// <returns>true if we should save, false otherwise</returns>
+    public override bool SaveCondition()
+    {
+        // Check if the transform has changed
+        return !Actor.Transform.Equals(saveDataTransform);
+    }
 
     public override void OnDisable()
     {
         base.OnDisable();
 
-        // Don't forget to unsubscribe your methods from events!
-        SaveManager.Instance.OnSaving -= SaveAction;
+        // Optional, but good practice: Set the data in the savegame for this object, before it gets disabled.
+        // This will make sure the savegame contains the latest data next time we save, even if this object doesn't exist anymore.
 
-
-        // The next section is optional, but good practice: 
-        // Write the latest state to the savegame, when the object is disabled. This ensures that the savegame
-        // remains up-to-date even if the object no longer exists at the time of the next save.
-
-
-        // During engine shutdown, serialization may not be reliable.
-        // For this example, we just skip manual saving. 
+        // JsonSerializer is not reliably available during shutdown
         if (Engine.IsRequestingExit)
             return;
 
-        // Manually update the savegame entry for this object
-        SaveAction(SaveManager.Instance.ActiveSaveData);
+        SaveManager.Instance.SetSaveData(ID, JsonSerializer.Serialize(Actor.Transform));
     }
+
+
 }

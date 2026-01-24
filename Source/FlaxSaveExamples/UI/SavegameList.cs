@@ -1,9 +1,8 @@
 ﻿// Copyright © 2025 Thomas Jungclaus. All rights reserved. Released under the MIT License.
 
 using FlaxEngine;
-using FlaxSave;
 
-namespace FlaxSaveExamples;
+namespace FlaxSave;
 
 /// <summary>
 /// SavegameList Script.
