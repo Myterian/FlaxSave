@@ -15,10 +15,10 @@ public class SaveManager : GamePlugin
     public static SaveManager Instance => instance ??= PluginManager.GetPlugin<SaveManager>();
 
     /// <summary>Version of the plugin</summary>
-    public static Version PluginVersion => new(1, 1, 74);
+    public static Version PluginVersion => new(1, 1, 76);
 
     /// <summary>The currently loaded in-memory data from a savegame</summary>
-    public Dictionary<Guid, string> ActiveSaveData { get; private set; } = new();
+    private Dictionary<Guid, string> ActiveSaveData = new();
 
     /// <summary>The currently loaded list of meta datas for savegames</summary>
     public List<SaveMeta> SaveMetas { get; private set; }
@@ -41,7 +41,7 @@ public class SaveManager : GamePlugin
     public event Action OnSaved;
 
     /// <summary>Event for when reading a savegame from disk is done. Used for setting actors and others in the scene to the saved state.</summary>
-    public event Action<Dictionary<Guid, string>> OnLoaded;
+    public event Action OnLoaded;
 
     private Task workerTask = null;
     private Func<Task> pendingGameSave = null;
@@ -163,6 +163,9 @@ public class SaveManager : GamePlugin
     {
         lock (saveLock)
         {
+            if (!ActiveSaveData.ContainsKey(id))
+                return null;
+            
             return ActiveSaveData[id];
         }
     }
@@ -173,7 +176,8 @@ public class SaveManager : GamePlugin
     {
         lock (saveLock)
         {
-            ActiveSaveData.Remove(id);
+            if (ActiveSaveData.ContainsKey(id))
+                ActiveSaveData.Remove(id);
         }
     }
 
@@ -295,7 +299,7 @@ public class SaveManager : GamePlugin
             Scripting.InvokeOnUpdate(() =>
             {
                 ActiveSaveData = readTask;
-                OnLoaded?.Invoke(readTask);
+                OnLoaded?.Invoke();
             });
         }
         catch (Exception ex) { Debug.LogException(ex); }

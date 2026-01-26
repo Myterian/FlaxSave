@@ -75,6 +75,7 @@ public class SavableTransform : Script
             return;
 
         // Manually update the savegame entry for this object
-        SaveAction(SaveManager.Instance.ActiveSaveData);
+        string data = JsonSerializer.Serialize(Actor.Transform);
+        SaveManager.Instance.SetSaveData(ID, data);
     }
 }

@@ -99,6 +99,15 @@ public class SavablePlayerStats : Script
             return;
 
         // Manually update the savegame entry for this object
-        SaveAction(SaveManager.Instance.ActiveSaveData);
+        PlayerStats stats = new();
+
+        stats.PlayerName = Actor.Name;
+        stats.Position = Actor.Position;
+        stats.SkillLevel = 42;
+        stats.Health = 100;
+
+        // Savegame files are Json-based, so the PlayerStats are serialized to json
+        string data = JsonSerializer.Serialize(stats);
+        SaveManager.Instance.SetSaveData(ID, data);
     }
 }
