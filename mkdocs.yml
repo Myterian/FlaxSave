@@ -1,0 +1,55 @@
+site_name: FlaxSave Documentation
+site_url: https://myterian.github.io/FlaxSave/
+
+nav:
+  - Quick Start: index.md
+  - Manual: Manual/index.md
+  - API:
+      - '': Api/index.md
+      - FlaxSave:
+        - SaveManager: Api/SaveManager.md
+        - SaveMeta: Api/SaveMeta.md
+        - FlaxSaveSettings: Api/FlaxSaveSettings.md
+        - ISavableAsset: Api/ISavableAsset.md
+        - FileIO: Api/FileIO.md
+        - IOOperation: Api/IOOperation.md
+
+
+watch:
+  - docs
+  - mkdocs.yml
+
+
+theme:
+  name: material
+  language: en
+  logo: FlaxSave.Icon.png
+  favicon: FlaxSave.Icon.png
+  features:
+    - navigation.tabs
+    - navigation.top
+    - navigation.expand
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+  palette:
+    - scheme: slate
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - admonition
+  - pymdownx.arithmatex:
+      generic: true
+  - footnotes
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.mark
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+copyright: Copyright &copy; 2025 - 2026 Thomas Jungclaus
