@@ -30,16 +30,6 @@ Gets the current version of the plugin. This property can be used to verify engi
  
 </br>
 
-### [ActiveSaveData](SaveManager.md#activesavedata)
-A dictionary that holds the loaded data of the active savegame. 
-
-- Type: `Dictionary<Guid, string>`
-- Key: The unique `Guid` of an object or asset
-- Value: The persistent data as JSON-string
-- Note: This property is `private set`. Changes should be done via [SetSaveData](#setsavedata) or during the [OnSaving](#onsaving) event.
-
-</br>
-
 
 
 ### [SaveMetas](SaveManager.md#savemetas)
