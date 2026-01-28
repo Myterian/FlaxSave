@@ -3,7 +3,7 @@
 namespace FlaxSave;
 
 /// <summary>IOOpertation class.</summary>
-public class IOOpertation
+internal class IOOpertation
 {
     public string Path { get; init; }
     public object Data { get; init; }

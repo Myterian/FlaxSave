@@ -7,7 +7,7 @@ using FlaxEngine.Json;
 namespace FlaxSave;
 
 /// <summary>IO operations for saving and loading savegames</summary>
-public class FileIO
+internal class FileIO
 {
     public static async Task WriteToDisk(IOOpertation io)
     {
