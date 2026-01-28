@@ -11,8 +11,6 @@ nav:
         - SaveMeta: Api/SaveMeta.md
         - FlaxSaveSettings: Api/FlaxSaveSettings.md
         - ISavableAsset: Api/ISavableAsset.md
-        - FileIO: Api/FileIO.md
-        - IOOperation: Api/IOOperation.md
 
 
 watch:
