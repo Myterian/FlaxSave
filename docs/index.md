@@ -170,4 +170,4 @@ If you load a save while a level is already running, you need to ensure your scr
 **FlaxSave** is asynchronous by design. Most operations happen on a background thread, to prevent stuttering and frame drops during gameplay.
 
 - **Always remember** When gathering data in [OnSaving](Api/SaveManager.md#onsaving), it's ok to **read** from the scene, but **don't modify** it.
-- Use [OnSaved](Api/SaveManager.md#onsaved) and [OnLoaded](Api/SaveManager.md#onloaded) for UI updates
+- Use [OnSaved](Api/SaveManager.md#onsaved) and [OnLoaded](Api/SaveManager.md#onloaded) for UI updates and other scene modifications. Also, consider using [InvokeOnSaved](Api/SaveManager.md#invokeonsaved), [InvokeOnLoaded](Api/SaveManager.md#invokeonloaded) and [InvokeOnDeleted](Api/SaveManager.md#invokeondeleted) for one-time updates.
