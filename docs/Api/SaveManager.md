@@ -41,7 +41,7 @@ Provides a chronological list of all detected save games. This collection is pri
 !!! Tip
     To load a specific savegame, retrive its [SaveName](SaveMeta.md#savename) from the list and pass it to the loading system.
 
-``` cs title="C#"
+``` cs title="C#" hl_lines="3 4 8 9"
 // Load the oldest savegame
 SaveMeta oldestSave = SaveManager.Instance.SaveMetas[0];
 string saveName = oldestSave.SaveName;
@@ -282,11 +282,11 @@ Queues a request to save the current game state to the disk. To prevent performa
 
 ``` cs title="C#"
 // Simple save with a custom name
-SaveManager.Instance.RequestGameSave("Before the boss");
+SaveManager.Instance.RequestGameSave("before the boss");
 
 // Save with custom metadata (i.e. for your Load Menu)
 var meta = new MyProjectMeta { PlayerLevel = 5, CurrentQuest = "Dungeon Boss" };
-SaveManager.Instance.RequestGameSave("AutoSave", meta);
+SaveManager.Instance.RequestGameSave("before the boss", meta);
 
 ```
 </br>
@@ -408,7 +408,7 @@ Registers a specific action to be invoked the next time a save operation is comp
 
 This is convenient for temporary notifications or logic, that only matters for the current save request, such as showing a success message or closing a specific menu after saving.
 
-``` cs title="C#"
+``` cs title="C#" hl_lines="8"
 public void Notification()
 {
     Debug.Log("The game was successfully saved!");
@@ -433,7 +433,7 @@ Registers a specific action to be invoked the next time a load operation is comp
 
 This is convenient for temporary logic or ui updates, that only matters for the current loading request, such as showing a success message or loading levels after the savegame loaded.
 
-``` cs title="C#"
+``` cs title="C#" hl_lines="5"
 public override void OnUpdate()
 {
     if (Input.GetKeyDown(KeyboardKeys.F9))
@@ -463,7 +463,7 @@ Registers a specific action to be invoked the next time a delete operation is co
 
 This is convenient for temporary notifications or logic, that only matters for the current deletion request, such as showing a success message or closing a specific menu after deleting a save file.
 
-``` cs title="C#"
+``` cs title="C#" hl_lines="5"
 public override void OnUpdate()
 {
     if (Input.GetKeyDown(KeyboardKeys.F11))
