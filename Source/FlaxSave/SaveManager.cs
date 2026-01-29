@@ -23,8 +23,20 @@ public class SaveManager : GamePlugin
     /// <summary>The currently loaded list of meta datas for savegames</summary>
     public List<SaveMeta> SaveMetas { get; private set; }
 
+    /// <summary>Contains actions to be invoked once, after saving to disk is done</summary>
+    private Queue<Action> onSavedOnce = new();
+
+    /// <summary>Contains actions to be invoked once, after loading from disk is done</summary>
+    private Queue<Action> onLoadedOnce = new();
+
+    /// <summary>Contains actions to be invoked once, after deleting from is done</summary>
+    private Queue<Action> onDeletedOnce = new();
+
     /// <summary>The save settings instance that is in use by the save system</summary>
     public FlaxSaveSettings SaveSettings => saveSettings ??= GameSettings.Load<FlaxSaveSettings>() ?? new();
+
+    /// <summary>Indicates if the save system is running any save/load/delete operations</summary>
+    public bool IsBusy => isActiveTaskRunning;
 
     private static SaveManager instance;
     private FlaxSaveSettings saveSettings;
@@ -34,14 +46,17 @@ public class SaveManager : GamePlugin
     private bool isActiveTaskRunning = false;
 
 
-    /// <summary>Event for when saving has started</summary>
+    /// <summary>Raised during the save process to collect data for the savegame</summary>
     public event Action<Dictionary<Guid, string>> OnSaving;
 
-    /// <summary>Event for when saving has finished</summary>
+    /// <summary>Raised after saving has finished and all data has been written to disk</summary>
     public event Action OnSaved;
 
-    /// <summary>Event for when reading a savegame from disk is done. Used for setting actors and others in the scene to the saved state.</summary>
+    /// <summary>Raised after reading a savegame from disk is done and available in the savemanager</summary>
     public event Action OnLoaded;
+
+    /// <summary>Raised after a savegame has been deleted from disk</summary>
+    public event Action OnDeleted;
 
     private Task workerTask = null;
     private Func<Task> pendingGameSave = null;
@@ -87,6 +102,8 @@ public class SaveManager : GamePlugin
         saveSettings = null;
         base.Deinitialize();
     }
+
+    #region Requests & Savegame
 
     /// <summary>Starts saving the game state to disk right away or at the next possible opening, if a save/load operation is already happening</summary>
     /// <param name="savegameName">The display name of the savegame, as it should appear in-game. The file name will be generated.</param>
@@ -217,6 +234,68 @@ public class SaveManager : GamePlugin
         RequestGameSave();
     }
 
+    #endregion
+
+    #region Event listening
+
+    /// <summary>
+    /// Registers an action that will be invoked the next time <see cref="OnSaved"/> is raised. 
+    /// The action is executed once and then removed.
+    /// </summary>
+    /// <param name="action">The action to execute</param>
+    public void InvokeOnSaved(Action action)
+    {
+        lock (saveLock)
+        {
+            onSavedOnce.Enqueue(action);
+        }
+    }
+
+    /// <summary>
+    /// Registers an action that will be invoked the next time <see cref="OnLoaded"/> is raised. 
+    /// The action is executed once and then removed.
+    /// </summary>
+    /// <param name="action">The action to execute</param>
+    public void InvokeOnLoaded(Action action)
+    {
+        lock (saveLock)
+        {
+            onLoadedOnce.Enqueue(action);
+        }
+    }
+
+    /// <summary>
+    /// Registers an action that will be invoked the next time <see cref="OnDeleted"/> is raised. 
+    /// The action is executed once and then removed.
+    /// </summary>
+    /// <param name="action">The action to execute</param>
+    public void InvokeOnDeleted(Action action)
+    {
+        lock (saveLock)
+        {
+            onDeletedOnce.Enqueue(action);
+        }
+    }
+
+    /// <summary>Executes a queue of actions</summary>
+    /// <param name="queue">The queue of actions to execute</param>
+    private void InvokeActionQueue(Queue<Action> queue)
+    {
+        List<Action> actions;
+
+        lock (saveLock)
+        {
+            actions = new List<Action>(queue);
+            queue.Clear();
+        }
+
+        for (int i = 0; i < actions.Count; i++)
+            actions[i]?.Invoke();
+    }
+
+    #endregion
+
+    #region async Tasks
 
     /// <summary>Writes a savegame to disk. Invokes OnSaving before starting and OnSaved after finishing the write operation.</summary>
     /// <param name="savegameName">The display name of the save. Defaults to 'Auto-Save'.</param>
@@ -253,7 +332,7 @@ public class SaveManager : GamePlugin
         };
 
         SaveMetas.Add(newMeta);
-        
+
         // Write to disk
         IOOpertation saveIO = new() { Path = SaveSettings.GetSaveFilePath(saveName), Data = ActiveSaveData };
         Task saveWrite = FileIO.WriteToDisk(saveIO);
@@ -263,8 +342,12 @@ public class SaveManager : GamePlugin
 
         await Task.WhenAll(saveWrite, metaWrite);
 
-        if (OnSaved != null)
-            Scripting.InvokeOnUpdate(OnSaved);
+
+        Scripting.InvokeOnUpdate(() =>
+        {
+            InvokeActionQueue(onSavedOnce);
+            OnSaved?.Invoke();
+        });
     }
 
     /// <summary>Writes engine and custom settings data as defined in the SaveSettings to disk</summary>
@@ -299,6 +382,7 @@ public class SaveManager : GamePlugin
             Scripting.InvokeOnUpdate(() =>
             {
                 ActiveSaveData = readTask;
+                InvokeActionQueue(onLoadedOnce);
                 OnLoaded?.Invoke();
             });
         }
@@ -347,6 +431,12 @@ public class SaveManager : GamePlugin
 
             if (-1 < index)
                 SaveMetas.RemoveAt(index);
+
+            Scripting.InvokeOnUpdate(() =>
+            {
+                InvokeActionQueue(onDeletedOnce);
+                OnDeleted?.Invoke();
+            });
         }
         catch (Exception ex) { Debug.LogException(ex); }
     }
@@ -400,6 +490,8 @@ public class SaveManager : GamePlugin
         pending = null;
         return task;
     }
+
+    #endregion
 
     public SaveManager()
     {
