@@ -55,6 +55,8 @@ SaveManager.Instance.RequestGameLoad(saveName);
 ```
 </br>
 
+
+
 ### [SaveSettings](SaveManager.md#savesettings)
 Provides access to the active save settings configuration. This property acts as the central hub for project-specific rules, such as save data versioning and file paths. The `SaveManager` retrieves these settings from the [FlaxSaveSettings](FlaxSaveSettings.md) asset within your project's `GameSettings` asset.
 
@@ -68,6 +70,15 @@ Version saveVersion = SaveManager.Instance.SaveMetas[0].SaveVersion;
 if(saveVersion != settingsVersion)
     Debug.Log("The savegame seems to be older. Proceed with caution!");
 ```
+</br>
+
+
+
+### [IsBusy](SaveManager.md#isbusy)
+Indicates whether the save system is actively performing a background task, like saving, loading or deleting.
+
+- Type: `bool`
+
 </br>
 
 ---
@@ -113,6 +124,9 @@ public override void OnDisable()
 This event is triggered after the background save operation has been completed and all the data has been written to disk.
 
 - Type: `Action`
+- [See also `InvokeOnSaved`](#invokeonsaved)
+
+This event can be used to update the in-game ui to give a hint, that game progression has been saved.
 
 !!! tip "Main thread dispatch"
     Unlike [OnSaving](#onsaving), this event is dispatched back on the main thread. This allows you to safely call UI methods and interact with engine components without thead-safety concerns.
@@ -123,6 +137,7 @@ This event is triggered after the background save operation has been completed a
 This event is triggered after the background loading operation has been completed and all the data is available for further utilization.
 
 - Type: `Action`
+- [See also `InvokeOnLoaded`](#invokeonloaded)
 
 !!! tip "Main thread dispatch"
     Unlike [OnSaving](#onsaving), this event is dispatched back on the main thread. This allows you to safely set object data and interact with engine components without thead-safety concerns.
@@ -144,6 +159,20 @@ public override void OnDisable()
     SaveManager.Instance.OnLoaded -= SpawnLevels;
 }
 ```
+</br>
+
+
+### [OnDeleted](SaveManager.md#ondeleted)
+This event is triggered after the background delete operation has been completed and a savegame has been removed from disk.
+
+- Type: `Action`
+- [See also `InvokeOnDeleted`](#invokeondeleted)
+
+This event can be used to refresh the in-game ui. Since the file is gone, you'll want to update the list of available saves, so the player doesn't try to pick a deleted entry. 
+
+!!! tip "Main thread dispatch"
+    Unlike [OnSaving](#onsaving), this event is dispatched back on the main thread. This allows you to safely call UI methods and interact with engine components without thead-safety concerns.
+
 </br>
 
 ---
@@ -200,6 +229,42 @@ if(data != null)
 
 </br>
 
+
+### [RemoveSaveData](SaveManager.md#removesavedata)
+Provides thread-safe removal of a specific entry from the active in-memory savegame data. The removal is applied to disk during the next save operation.
+
+|Parameter|Type|Description|
+|----|---|---|
+|id|Guid|Unique identifier of a save component|
+
+**How it works**: This method removes the serialized data associated with the specific component id from the [ActiveSaveData](#activesavedata). If no entry exists for the given id, the call has no effect.
+
+!!! info "Forgotten, but not gone"
+    A component might re-add itself to [ActiveSaveData](#activesavedata) during the [OnSaving](#onsaving) event or via [SetSaveData](#setsavedata). Ensure the component is disabled or removed if permanent deletion is intended.
+
+!!! info "In-Memory only"
+    This method only affects the current active in-memory save state. Call the [RequestGameSave](#requestgamesave) method to write the updated data to disk.
+
+</br>
+
+
+### [ClearSaveData](SaveManager.md#clearsavedata)
+Provides thread-safe for clearing all entries from the active in-memory savegame data.
+
+|Parameter|Type|Description|
+|----|---|---|
+|(none)|||
+
+**How it works**: This method clears all serialized component data from [ActiveSaveData](#activesavedata). Unsaved runtime progress is lost, unless a save is performed before clearing. 
+</p> This method does not affect existing save files. The cleared state is written to disk during the next save operation.
+
+!!! tip "New Game / New Game+"
+    This method is useful for starting a new playthrough, without restarting the application. It ensures that no persistent runtime state is carried over.
+
+!!! warning "All unsaved progress will be lost"
+    Clearing the active save data discards all unsaved progress. Consider promting the player to save the current state before calling this method.
+
+</br>
 
 
 ### [RequestGameSave](SaveManager.md#requestgamesave)
@@ -303,40 +368,6 @@ Queues a request to load the states of all assets defined in [FlaxSaveSettings](
 
 
 
-### [RemoveSaveData](SaveManager.md#removesavedata)
-Provides thread-safe removal of a specific entry from the active in-memory savegame data. The removal is applied to disk during the next save operation.
-
-|Parameter|Type|Description|
-|----|---|---|
-|id|Guid|Unique identifier of a save component|
-
-**How it works**: This method removes the serialized data associated with the specific component id from the [ActiveSaveData](#activesavedata). If no entry exists for the given id, the call has no effect.
-
-!!! info "Forgotten, but not gone"
-    A component might re-add itself to [ActiveSaveData](#activesavedata) during the [OnSaving](#onsaving) event or via [SetSaveData](#setsavedata). Ensure the component is disabled or removed if permanent deletion is intended.
-
-!!! info "In-Memory only"
-    This method only affects the current active in-memory save state. Call the [RequestGameSave](#requestgamesave) method to write the updated data to disk.
-
-</br>
-
-### [ClearSaveData](SaveManager.md#clearsavedata)
-Provides thread-safe for clearing all entries from the active in-memory savegame data.
-
-|Parameter|Type|Description|
-|----|---|---|
-|(none)|||
-
-**How it works**: This method clears all serialized component data from [ActiveSaveData](#activesavedata). Unsaved runtime progress is lost, unless a save is performed before clearing. 
-</p> This method does not affect existing save files. The cleared state is written to disk during the next save operation.
-
-!!! tip "New Game / New Game+"
-    This method is useful for starting a new playthrough, without restarting the application. It ensures that no persistent runtime state is carried over.
-
-!!! warning "All unsaved progress will be lost"
-    Clearing the active save data discards all unsaved progress. Consider promting the player to save the current state before calling this method.
-
-</br>
 
 ### [SetAutoSaveActive](SaveManager.md#setautosaveactive)
 Enables and disables the auto-save feature.
@@ -361,5 +392,91 @@ Opens the savegame directory in the systems file browser.
 
 !!! info "Location"
     Savegames created in the Flax Editor are located in a different directory than savegames created in a packaged game build.
+
+</br>
+
+
+
+### [InvokeOnSaved](SaveManager.md#invokeonsaved)
+Registers a specific action to be invoked the next time a save operation is completed. Once the action is invoked, it is automatically removed from queue.
+
+|Parameter|Type|Description|
+|----|---|---|
+|action|Action|The action or logic that runs after the next successful save|
+
+**How it works**: Think of this as a one-time subscription. This method queues an action and executes it the next time the [OnSaved](#onsaved) event is triggered. 
+
+This is convenient for temporary notifications or logic, that only matters for the current save request, such as showing a success message or closing a specific menu after saving.
+
+``` cs title="C#"
+public void Notification()
+{
+    Debug.Log("The game was successfully saved!");
+}
+
+public override void OnEnable()
+{
+    SaveManager.Instance.InvokeOnSaved(Notification);
+}
+```
+
+</br>
+
+### [InvokeOnLoaded](SaveManager.md#invokeonloaded)
+Registers a specific action to be invoked the next time a load operation is completed. Once the action is invoked, it is automatically removed from queue.
+
+|Parameter|Type|Description|
+|----|---|---|
+|action|Action|The action or logic that runs after the next successful loading|
+
+**How it works**: Think of this as a one-time subscription. This method queues an action and executes it next time the [OnLoaded](#onloaded) event is triggered.
+
+This is convenient for temporary logic or ui updates, that only matters for the current loading request, such as showing a success message or loading levels after the savegame loaded.
+
+``` cs title="C#"
+public override void OnUpdate()
+{
+    if (Input.GetKeyDown(KeyboardKeys.F9))
+    {
+        SaveManager.Instance.InvokeOnLoaded(SpawnLevels);
+        saveManager.RequestGameLoad(saveManager.SaveMetas[0].SaveName);
+    }
+}
+
+private void SpawnLevels()
+{
+    Level.LoadScene(GameSettings.Load().FirstScene);
+}
+```
+
+
+</br>
+
+### [InvokeOnDeleted](SaveManager.md#invokeondeleted)
+Registers a specific action to be invoked the next time a delete operation is completed. Once the action is invoked, it is automatically removed from queue.
+
+|Parameter|Type|Description|
+|----|---|---|
+|action|Action|The action or logic that runs after the next file deletion|
+
+**How it works**: Think of this as a one-time subscription. This method queues an action and executes it next time the [OnDeleted](#ondeleted) event is triggered.
+
+This is convenient for temporary notifications or logic, that only matters for the current deletion request, such as showing a success message or closing a specific menu after deleting a save file.
+
+``` cs title="C#"
+public override void OnUpdate()
+{
+    if (Input.GetKeyDown(KeyboardKeys.F11))
+    {
+        SaveManager.Instance.InvokeOnDeleted(Notification);
+        saveManager.RequestGameDelete(saveManager.SaveMetas[0].SaveName);
+    }
+}
+
+public void Notification()
+{
+    Debug.Log("The savegame was successfully removed!");
+}
+```
 
 </br>
