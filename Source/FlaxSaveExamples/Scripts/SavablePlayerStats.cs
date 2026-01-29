@@ -22,7 +22,12 @@ public class SavablePlayerStats : Script
     // Saving, on the other hand, is event driven and happens during SaveManager.OnSaving,
     // right before the savegame is written to disk.
     //
-    // Fun fact: Without the comments, this scripts would be ~65 lines long.
+    // Fun fact: Without the comments, this scripts would be ~70 lines long.
+
+    // Some public fields for serialization
+    public string Name = "My Awesome Player Title";
+    public int Health = 100;
+    public int SkillLevel = 42;
 
 
     /// <summary>A wrapper class is used to bundle the various values, so they can be saved together</summary>
@@ -41,10 +46,10 @@ public class SavablePlayerStats : Script
         // Step one is to create the wrapper class for the save data and set all relevant values 
         PlayerStats stats = new();
 
-        stats.PlayerName = Actor.Name;
+        stats.PlayerName = Name;
         stats.Position = Actor.Position;
-        stats.SkillLevel = 42;
-        stats.Health = 100;
+        stats.SkillLevel = SkillLevel;
+        stats.Health = Health;
 
         // Savegame files are Json-based, so the PlayerStats are serialized to json
         string data = JsonSerializer.Serialize(stats);
@@ -73,10 +78,10 @@ public class SavablePlayerStats : Script
         PlayerStats savedStats = JsonSerializer.Deserialize<PlayerStats>(savedData);
 
         // Final step: Restore the player's state
-        Actor.Name = savedStats.PlayerName;
+        Name = savedStats.PlayerName;
         Actor.Position = savedStats.Position;
-        int level = savedStats.SkillLevel;
-        int health = savedStats.Health;
+        SkillLevel = savedStats.SkillLevel;
+        Health = savedStats.Health;
     }
 
 

@@ -181,7 +181,10 @@ public class SaveManager : GamePlugin
         lock (saveLock)
         {
             if (!ActiveSaveData.ContainsKey(id))
+            {
+                Debug.LogWarning($"Savegame: No entry with the id {id} was found");
                 return null;
+            }
             
             return ActiveSaveData[id];
         }
@@ -231,7 +234,12 @@ public class SaveManager : GamePlugin
             return;
 
         nextAutoSave = Time.GameTime + SaveSettings.AutoSaveIntervalSeconds;
-        RequestGameSave();
+
+        lock (saveLock)
+        {
+            pendingGameSave = () => SaveGameToDisk(null, null, true);
+            StartTaskQueue();
+        }
     }
 
     #endregion
@@ -300,8 +308,9 @@ public class SaveManager : GamePlugin
     /// <summary>Writes a savegame to disk. Invokes OnSaving before starting and OnSaved after finishing the write operation.</summary>
     /// <param name="savegameName">The display name of the save. Defaults to 'Auto-Save'.</param>
     /// <param name="customMetaData">Container for custom meta data</param>
+    /// <param name="isAutoSave">Indicator if this save operation was dispatched by the auto save feature</param>
     /// <returns>Task</returns>
-    private async Task SaveGameToDisk(string savegameName = null, object customMetaData = null)
+    private async Task SaveGameToDisk(string savegameName = null, object customMetaData = null, bool isAutoSave = false)
     {
         // Nothing to save
         if (OnSaving == null)
@@ -328,7 +337,7 @@ public class SaveManager : GamePlugin
             SaveDate = DateTime.UtcNow,
             SaveVersion = SaveSettings.SavegameVersion,
             CustomData = customMetaData,
-            IsAutoSave = savegameName == null
+            IsAutoSave = isAutoSave
         };
 
         SaveMetas.Add(newMeta);
@@ -378,10 +387,10 @@ public class SaveManager : GamePlugin
         {
             IOOpertation saveIO = new() { Path = SaveSettings.GetSaveFilePath(saveName) };
             Dictionary<Guid, string> readTask = await FileIO.ReadFromDisk<Dictionary<Guid, string>>(saveIO);
+            ActiveSaveData = readTask;
 
             Scripting.InvokeOnUpdate(() =>
             {
-                ActiveSaveData = readTask;
                 InvokeActionQueue(onLoadedOnce);
                 OnLoaded?.Invoke();
             });

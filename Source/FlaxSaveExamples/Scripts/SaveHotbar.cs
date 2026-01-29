@@ -21,8 +21,8 @@ public class SaveHotbar : Script
         // a script or an actor is initialized.
         if (Input.GetKeyDown(KeyboardKeys.F8))
         {
+            saveManager.InvokeOnLoaded(() => ReloadScenes(Level.Scenes));
             saveManager.RequestGameLoad(saveManager.SaveMetas[^1].SaveName);
-            ReloadScenes(Level.Scenes);
         }
 
         // Saves assets to disk
