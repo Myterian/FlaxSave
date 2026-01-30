@@ -23,7 +23,7 @@ public class FlaxSaveSettingsItem : JsonAssetItem
     }
 }
 
-[ContentContextMenu("New/Flax Save/Settings")]
+[ContentContextMenu("New/FlaxSave/Save Settings")]
 public class FlaxSaveSettingsProxy : SpawnableJsonAssetProxy<FlaxSaveSettings>
 {
     public override string NewItemName => "Save Settings";
