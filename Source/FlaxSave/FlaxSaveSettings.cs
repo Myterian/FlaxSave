@@ -17,7 +17,7 @@ public class FlaxSaveSettings : FlaxEditor.Content.Settings.SettingsBase
     private string settingDir;
     private string validatedFileExtension;
 
-    [ShowInEditor, Serialize, EditorDisplay("Settings to Save"), EditorOrder(5)]
+    [ShowInEditor, Serialize, EditorDisplay("Savable Assets"), EditorOrder(5), ExpandGroups]
     public List<JsonAssetReference<ISavableAsset>> Assets { get; private set; } = new();
 
     [ShowInEditor, Serialize, EditorDisplay("Meta"), EditorOrder(1), Tooltip("The file extension name for savegame files. Internally normalized to guarantee a valid file extension. Defaults to '.save' if normalization fails."),]
@@ -33,8 +33,8 @@ public class FlaxSaveSettings : FlaxEditor.Content.Settings.SettingsBase
     [ShowInEditor, Serialize, EditorDisplay("Auto Save"), EditorOrder(2), Tooltip("Toggles auto save on and off")]
     private bool autoSave = true;
 
-    [ShowInEditor, Serialize, EditorDisplay("Settings to Save"), EditorOrder(4), Tooltip("Changes made to Json Assets in editor are saved permanently, even when loaded from disk in play mode. This is to not accidentally mess up any configuration.")]
-    private bool skipLoadingSettingsInEditor = true;
+    [ShowInEditor, Serialize, EditorDisplay("Savable Assets"), EditorOrder(4), Tooltip("Changes made to Json Assets in editor are saved permanently, even when loaded from disk in play mode. This is to not accidentally mess up any configuration.")]
+    private bool skipLoadingAssetsInEditor = true;
 
     /// <summary>Auto save intervals in minutes</summary>
     [HideInEditor]
@@ -53,7 +53,7 @@ public class FlaxSaveSettings : FlaxEditor.Content.Settings.SettingsBase
     public bool AutoSave => autoSave;
 
     [HideInEditor]
-    public bool SkipLoadingSettingsInEditor => skipLoadingSettingsInEditor;
+    public bool SkipLoadingSettingsInEditor => skipLoadingAssetsInEditor;
 
     /// <summary>A value indicating the savegame version as defined in the save settings</summary>
     [HideInEditor]

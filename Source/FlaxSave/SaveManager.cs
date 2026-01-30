@@ -224,7 +224,7 @@ public class SaveManager : GamePlugin
         if (!isActive) return;
 
         Scripting.LateUpdate += AutoSave;
-        nextAutoSave = Time.GameTime + SaveSettings.AutoSaveIntervalSeconds;
+        nextAutoSave = Time.GameTime + Mathf.Min(SaveSettings.AutoSaveIntervalSeconds, 60);
     }
 
     /// <summary>Creates savegames in intervals</summary>
@@ -233,7 +233,7 @@ public class SaveManager : GamePlugin
         if (Time.GameTime < nextAutoSave)
             return;
 
-        nextAutoSave = Time.GameTime + SaveSettings.AutoSaveIntervalSeconds;
+        nextAutoSave = Time.GameTime + Mathf.Min(SaveSettings.AutoSaveIntervalSeconds, 60);
 
         lock (saveLock)
         {
