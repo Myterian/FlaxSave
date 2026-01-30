@@ -21,7 +21,10 @@ public class SaveHotbar : Script
         // a script or an actor is initialized.
         if (Input.GetKeyDown(KeyboardKeys.F8))
         {
-            saveManager.InvokeOnLoaded(() => ReloadScenes(Level.Scenes));
+            Scene[] scenes = Level.Scenes;
+            saveManager.InvokeOnLoaded(() => LoadScenes(scenes));
+            
+            Level.UnloadAllScenes();
             saveManager.RequestGameLoad(saveManager.SaveMetas[^1].SaveName);
         }
 
@@ -37,10 +40,8 @@ public class SaveHotbar : Script
             saveManager.OpenSaveDirectory();
     }
 
-    private void ReloadScenes(Scene[] scenes)
+    private void LoadScenes(Scene[] scenes)
     {        
-        Level.UnloadAllScenes();
-
         for (int i = 0; i < scenes.Length; i++)
             Level.LoadScene(scenes[i].ID);
     }
