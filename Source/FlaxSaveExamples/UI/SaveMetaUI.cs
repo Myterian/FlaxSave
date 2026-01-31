@@ -10,9 +10,13 @@ namespace FlaxSave;
 /// <summary></summary>
 public class SaveMetaUI : Script
 {
+    public ControlReference<Button> LoadButton;
     public ControlReference<Label> SavetTitelLabel;
     public ControlReference<Label> VersionLabel;
     public ControlReference<Label> DateLabel;
+
+    // Cached SaveMeta.SaveName for loading a savegame
+    private string saveName;
 
 
     /// <summary>
@@ -40,5 +44,40 @@ public class SaveMetaUI : Script
         dateBuilder.AppendJoin(", ", localTime.ToString("d", Localization.CurrentCulture), localTime.ToString("t", Localization.CurrentCulture));
         DateLabel.Control.Text = dateBuilder.ToString();
 
+
+        // Cache the SaveName for later RequestGameLoad operations
+        saveName = metaData.SaveName;
+
+        // Subscribe to the button clicked event
+        LoadButton.Control.Clicked -= LoadSave;
+        LoadButton.Control.Clicked += LoadSave;
+
+    }
+
+    /// <summary>Load a savegame and reload the current scenes, for changes to take effect</summary>
+    public void LoadSave()
+    {
+        // Load the currently active scenes, after the savegame has been loaded.
+        // This is to ensure that every persistable script and actor is updated.
+        Scene[] scenes = Level.Scenes;
+        SaveManager.Instance.InvokeOnLoaded(() =>
+        {
+            for (int i = 0; i < scenes.Length; i++)
+                Level.LoadScene(scenes[i].ID);
+        });
+
+        // Remove every active scene before loading a savegame, as persistable actors
+        // could override any previous data in the OnDisabled method
+        Level.UnloadAllScenes();
+
+        // Request a savegame load with the SaveName from the associated save meta
+        SaveManager.Instance.RequestGameLoad(saveName);
+    }
+
+    public override void OnDisable()
+    {
+        // Don't forget to unsubscribe from events!
+        LoadButton.Control.Clicked -= LoadSave;
+        base.OnDisable();
     }
 }
