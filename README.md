@@ -40,17 +40,8 @@ This design allows for incremental integration into a project, without the need 
 - Separate handling for Editor and in-game saves
 
 
-## Examples
-The following examples are included:
-- **SavableTransform** A simple script that saves and loads the transform of an actor
-- **SavablePlayerStats** An advanced script, that saves and loads various player stats
-- **SaveHotbar** A script that dispatches saving and loading via button press
-- **SavableAssets** Various JSON-Asset classes that save and load engine settings
-- **User Interface** Scripts for a dynamic savegame list for in-game use
-
-
-## Documentation
-The [documentation](https://www.google.com/) contains everything from quickstart guides to API documentation, with focus on practical usage rather than theory.
+## Documentation & Examples
+FlaxSave is [fully documented here](https://myterian.github.io/FlaxSave/) and contains examples for getting instantly started
 
 
 ## Installation
