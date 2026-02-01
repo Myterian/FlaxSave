@@ -3,7 +3,10 @@ site_url: https://myterian.github.io/FlaxSave/
 
 nav:
   - Quick Start: index.md
-  - Manual: Manual/index.md
+  - Manual:
+      - '': Manual/index.md
+      - Guides:
+        - Manual/Installation.md
   - API:
       - '': Api/index.md
       - FlaxSave:
