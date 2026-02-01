@@ -5,10 +5,9 @@
 1. [What is FlaxSave?](#what-is-flaxsave)
 2. [How it works](#how-it-works)
 3. [Features](#features)
-4. [Examples](#examples)
-5. [Documentation](#documentation)
-6. [Installation](#installation)
-7. [Known Issues](#known-issues)
+4. [Documentation & Examples](#documentation--examples)
+5. [Installation](#installation)
+6. [Known Issues](#known-issues)
 
 
 ## What is FlaxSave?
