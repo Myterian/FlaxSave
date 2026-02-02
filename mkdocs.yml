@@ -7,6 +7,7 @@ nav:
       - '': Manual/index.md
       - Guides:
         - Manual/Installation.md
+        - Manual/SavingLoading.md
   - API:
       - '': Api/index.md
       - FlaxSave:
