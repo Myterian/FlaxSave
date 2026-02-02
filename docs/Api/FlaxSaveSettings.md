@@ -92,7 +92,7 @@ Gets the absolute path of the save directory on disk
 
 - Type: `string`
 - Access: `get`
-- Note: This directory can be opened via the [Settings asset `Open Directory` button](../Manual/SaveSettings.md)
+- Note: This directory can be opened via the [Settings asset `Open Directory` button](../Manual/SaveSettings.md#open-directory)
 
 </br>
 
@@ -150,6 +150,6 @@ Opens the OS file explorer at the savegame directory location
 **How it works**: This method opens a new system explorer window at the savegame directory.
 
 !!! tip
-    You don't need to call this code during development, the save directory can simply be opened via the [Settings asset `Open Directory` button](../Manual/SaveSettings.md)
+    You don't need to call this code during development, the save directory can simply be opened via the [Settings asset `Open Directory` button](../Manual/SaveSettings.md#open-directory)
 
 </br>
