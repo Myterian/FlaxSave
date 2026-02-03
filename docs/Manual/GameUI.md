@@ -96,7 +96,7 @@ Every slot in the list is a UI Widget linked to a specific [`SaveMetas`](../Api/
     - **Logic & Scripts** in `FlaxSave > Source > FlaxSaveExamples`
 
 ### 1. Create a UI Widget
-<!-- Image of finished widget in prefab editor -->
+![UI Widget Setup](UI-Widget.jpg)
 For this example, the UI Widget consists of a `Button`, with three `Label` children. The labels will display:
 
 - `DisplayName`
@@ -106,7 +106,7 @@ For this example, the UI Widget consists of a `Button`, with three `Label` child
 Convert the setup into a prefab.
 
 ### 2. Create the Save-Slot Logic
-Create and attach a script (i.e. `SaveSlot`) to your Widget. This script will fill the UI with the data from a [`SaveMeta`](../Api/SaveMeta.md) object and handle the click event, to trigger a savegame load.
+Create and attach a script (i.e. `SaveSlot`) to your Widget prefab. This script will fill the UI with the data from a [`SaveMeta`](../Api/SaveMeta.md) object and handle the click event, to trigger a savegame load.
 
 ``` cs title="C#"
 public class SaveSlot : Script
@@ -140,7 +140,7 @@ public class SaveSlot : Script
     // Request a savegame load with the SaveName from the associated save meta
     public void LoadSave()
     {
-        SaveManager.Instance.RequestGameLoad(saveName);
+        SaveManager.Instance.RequestGameLoad(saveMeta.SaveName);
     }
 
     public override void OnDisable()
@@ -153,14 +153,20 @@ public class SaveSlot : Script
 
 ```
 
+Remember to save changes to your prefab.
+
 ### 3. Scene Setup
-<!-- Create UICanvas and Vertical Panel control, attach script and set widget field -->
+![Scene Setup](UI-SceneSetup.jpg)
+For the list in the UI itself, create a `UICanvas` and add a child `UIControl` with the type set to `VerticalPanel`. 
+
+The advantage of a `VerticalPanel` is that it handles the layout for you: all children (your Save-Slot Widgets) will automatically be arranged into a clean vertical list as they are spawned. 
+This keeps your UI organized and responsive without manual positioning.
 
 
 ### 4. Create the List Logic
 Create and attach a script (i.e. `SaveListManager`) to the `VerticalPanel` control.
 
-This script spawns the UI Widgets as children of a `UIControl`. To keep the UI in sync with the [`SaveMetas`](../Api/SaveManager.md#savemetas), we use the [`OnSaved`](../Api/SaveManager.md#onsaved) and [`OnDeleted`](../Api/SaveManager.md#ondeleted) events.
+This script spawns the UI Widgets as children of a `VerticalPanel`. To keep the UI in sync with the [`SaveMetas`](../Api/SaveManager.md#savemetas), we use the [`OnSaved`](../Api/SaveManager.md#onsaved) and [`OnDeleted`](../Api/SaveManager.md#ondeleted) events.
 
 ``` cs title="C#"
 public class SaveListManager : Script
@@ -206,13 +212,23 @@ public class SaveListManager : Script
 
 ```
 
-Whenever you request a game save or an auto-save happens, the Save-Slot UI will automatically update and you can click the `Button` to recreate a previous game state.
+Whenever you request a game save or an auto-save happens, the Save-Slot UI will automatically update and you can click the `Button` of the UI Widget to load a previous game state.
 
+
+
+---
+
+
+
+## Best Practices
 
 ### Notifications
-Sometimes you don't want to refresh a whole list, but just trigger a quick "Toast" notification (i.e. "Game Saved!"). Since saving happens on a background thread, you cannot trigger UI changes directly from `OnSaving`.
+Since data collection happens in the background, trying to show a a "Game Saved!" notification directly inside `OnSaving` will be rejected by the engine. 
 
-Use the Invoke helpers to safely trigger main-thread UI actions:
+Use the [`InvokeOnSaved`](../Api/SaveManager.md#invokeonsaved) helper to trigger notifications,
+as the helper waits for the background work to finish, before executing any action on the main-thread. 
+
+The same concept goes for [`InvokeOnLoaded`](../Api/SaveManager.md#invokeonloaded) and [`InvokeOnDeleted`](../Api/SaveManager.md#invokeondeleted).
 
 ``` cs title="C#"
 public void QuickSave()
@@ -220,7 +236,7 @@ public void QuickSave()
     // This ensures the notification happens on the UI thread
     // only AFTER the file is safely written to disk.
     SaveManager.Instance.InvokeOnSaved(() => {
-        NotificationUI.Show("Game Saved successfully!");
+        Debug.Log("Game Saved successfully!");
     });
 
     SaveManager.Instance.RequestGameSave("QuickSave");
@@ -228,11 +244,52 @@ public void QuickSave()
 
 ```
 
+### UI Refreshing
+Don't refresh your UI list every frame. Only rebuild the list, when something actually changes. By subscribing to the [`SaveManager events`](../Api/SaveManager.md#events), 
+your UI stays reactive without wasting performance.
 
----
+- `OnSaved`: Refresh, when a new save is created.
+- `OnDeleted`: Refresh, when a save is removed (to avoid ghost-slots)
+- `OnLoaded`: Close the menu and trigger scene transition, once the data is ready
 
-## Advanced UI Work
 
----
+### Localization
+Use `Localization Keys` in the [`SaveMeta.DisplayName`](../Api/SaveMeta.md#displayname) for automated entries, like auto-saves and quick-saves. By using a `LocalizationString`, you can attempt to translate these keys, while still gracefully falling back to the raw string, if the user provided a custom name for a manual save.
 
-## Best Practices
+``` cs title="C#"
+public void Bind(SaveMeta metaData)
+{
+    // This tries to return the localized version of DisplayName.
+    // If no localization key matches, it falls back to the raw value.
+    var displayText = new LocalizationString()
+    { 
+        Id = metaData.DisplayName, 
+        Value = metaData.DisplayName 
+    };
+
+    SavetTitelLabel.Control.Text = displayText;
+}
+
+```
+
+</br>
+
+When displaying the [`SaveDate`](../Api/SaveMeta.md#savedate), use the C# built-in formatting and `ToLocalTime`, to respect the user's regional settings and time zone.
+
+``` cs title="C#"
+// Simple. Uses the general date/time pattern (i.e. 01/01/2026 3:00 PM)
+DateLabel.Control.Text = metaData.SaveDate.ToLocalTime().ToString("g");
+
+// Advanced. Full control using the games current culture setting
+DateTime localTime = metaData.SaveDate.ToLocalTime();
+
+string date = localTime.ToString("d", Localization.CurrentCulture);
+string time = localTime.ToString("t", Localization.CurrentCulture);
+
+DateLabel.Control.Text = date + ", " + time;
+
+```
+
+
+### Empty Saves
+Always handle the "No Saves Found" cases. If `SaveManager.Instance.SaveMetas.Count == 0`, display a simple label saying "No saves found!". It's a small detail that makes the UI feel finished.
