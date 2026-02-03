@@ -6,30 +6,6 @@ Welcome to **[FlaxSave](https://github.com/Myterian/FlaxSave) - A modular, compo
 This system is designed to provide a high performance, multi-threaded save system, that stays out of you way and keeps your gameplay smooth.
 
 
-Manual: Table of Contents
-
-0. System Overview
-
-1. Setup & Configuration
-    - Installation, `SaveSettings` asset creation and integration into `GameSettings`
-
-2. Saving & Loading Basics
-    - Persistable states in scripts, actors, assets
-
-3. Metadata & UI Integration
-    - Custom Metadata
-    - UI Presentation
-
-4. Global Data (ISavableAsset)
-    - Persistable states for configuration assets
-
-5. Advanced Topics
-    - Auto Save
-    - Data Migration & Versioning
-    - Thread Safety rules
-
-6. Best Practices
-
 ## How it works
 ![Logic Flow Overview](Flow.jpg)
 

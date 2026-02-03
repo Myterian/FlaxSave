@@ -78,7 +78,8 @@ public class SavableTransform : Script
 ```
 
 !!! example "Detailed Examples"
-    Check out [the examples scripts](Manual/Examples.md), for more detailed and advanced examples.
+    Check out for more detailed and advanced examples in your plugin folder 
+    </br>`FlaxSave > Source > FlaxSaveExamples > Scripts`
 
 </br>
 
@@ -111,7 +112,8 @@ public class SavableTransform : Script
 ```
 
 !!! example "Detailed Examples"
-    Check out [the examples scripts](Manual/Examples.md), for more detailed and advanced examples.
+    Check out for more detailed and advanced examples in your plugin folder 
+    </br>`FlaxSave > Source > FlaxSaveExamples > Scripts`
 
 </br>
 

@@ -122,3 +122,9 @@ Choosing the right tool is key for a clean project architecture.
     ![Register your `ISavableAsset` here](ISavable%20-%20Register.jpg)
 
     `ISavableAsset` need to be registered to be managed by the `SaveManager`. Drag your new asset in the `Assets` list within the [`SaveSettings`](SaveSettings.md).
+
+6. **Save & Load**
+
+    Use [`RequestAssetSave`](../Api/SaveManager.md#requestassetssave) and [`RequestAssetLoad`](../Api/SaveManager.md#requestassetsload) to save and load asset states.
+
+    Note that [`RequestAssetLoad`](../Api/SaveManager.md#requestassetsload) is automatically executed on startup.
