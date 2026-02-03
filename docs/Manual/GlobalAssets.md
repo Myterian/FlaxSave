@@ -128,3 +128,6 @@ Choosing the right tool is key for a clean project architecture.
     Use [`RequestAssetSave`](../Api/SaveManager.md#requestassetssave) and [`RequestAssetLoad`](../Api/SaveManager.md#requestassetsload) to save and load asset states.
 
     Note that [`RequestAssetLoad`](../Api/SaveManager.md#requestassetsload) is automatically executed on startup.
+
+    !!! info "Editor protection"
+        To prevent accidental data loss while working in the Flax Editor, automatic assets loading is disabled by default during edit-time. This behaviour can be configured in [SaveSettings asset](../Manual/SaveSettings.md)
