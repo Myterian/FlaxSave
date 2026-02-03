@@ -10,6 +10,7 @@ nav:
         - Manual/SavingLoading.md
         - Manual/GlobalAssets.md
         - Manual/AutoSave.md
+        - Manual/CustomMeta.md
         - Manual/GameUI.md
       - Editor:
         - Manual/SaveSettings.md

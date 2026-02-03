@@ -27,6 +27,9 @@ While the default [`SaveMeta`](../Api/SaveMeta.md) provides the basics (Name, Da
 
 FlaxSave provides a straight-forward integration to attach additional information (i.e. player location, current skill level or quest progression) to a [`SaveMeta`](../Api/SaveMeta.md) entry.
 
+!!! info "Custom Metadata Guide"
+    Checkout the [Custom Metadata Guide](CustomMeta.md) for more information.
+
 ### Defining your Metadata
 To store custom information, create a simple `class` that wraps the data you want to show in your Save-Slot UI.
 
@@ -50,7 +53,7 @@ public void SaveTheGame()
     {
         LevelName = "The Darkest Dungeon",
         PlayerLevel = 5,
-        CompletionPercentage = 42.7f;
+        CompletionPercentage = 42.7f
     };
 
     // This data is now attached to the savegames metadata
