@@ -292,6 +292,36 @@ SaveManager.Instance.RequestGameSave("before the boss", meta);
 </br>
 
 
+
+### [RequestGameSaveOverwrite](SaveManager.md#requestgamesaveoverwrite)
+Queues a request to save the current game state with an existing [SaveMetas](#savemetas) entry to the disk. To prevent performance issues, the save operation runs on a background thread.
+
+|Parameter|Type|Description|
+|----|---|---|
+|index|int|The index of the [SaveMetas](#savemetas) entry to overwrite|
+|customMetaData|object|(Optional) Any extra data you want to attach to the [SaveMeta](SaveMeta.md) (like player progress or current quest) for display menus|
+
+**How it works**: During execution, this method creates a new save file and a corresponding [SaveMetas](#savemetas) entry. Once the new data is successfully writen, the system deletes the old save file and replaces the [SaveMetas](#savemetas) entry at the specified index. 
+
+The `DisplayName` property and [SaveMetas](#savemetas) entry index remain unchanged, keeping the appearance in your UI list consistent and providing a seamless updating experience.
+
+This method uses a queue system. If you call this method while a save or load operation is already in progress, the request will be queued and executed as soon as possible.
+
+!!! info "Anti-Spam Protection"
+    The queue only holds _one_ save request at a time. If a player "hammers" the save button while the system is busy, only the most recent request will be executed once the current task finishes. This keeps the disk and performance clean.
+
+``` cs title="C#"
+// Simple save overwrite
+SaveManager.Instance.RequestGameSaveOverwrite(index);
+
+// Save with custom metadata (i.e. for your Load Menu)
+var meta = new MyProjectMeta { PlayerLevel = 5, CurrentQuest = "Dungeon Boss" };
+SaveManager.Instance.RequestGameSaveOverwrite(index, meta);
+
+```
+</br>
+
+
 ### [RequestGameLoad](SaveManager.md#requestgameload)
 Queues a request to load a specific savegame from disk. To prevent performance issues, the load operation runs on a background thread.
 
