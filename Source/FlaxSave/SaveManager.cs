@@ -112,7 +112,8 @@ public class SaveManager : GamePlugin
     {
         lock (saveLock)
         {
-            pendingGameSave = () => SaveGameToDisk(savegameName, customMetaData);
+            SaveMeta saveMeta = GetSaveMeta(savegameName, customMetaData);
+            pendingGameSave = () => SaveGame(saveMeta);
             StartTaskQueue();
         }
     }
@@ -155,6 +156,26 @@ public class SaveManager : GamePlugin
         lock (saveLock)
         {
             pendingGameDelete = () => DeleteFileFromDisk(saveName);
+            StartTaskQueue();
+        }
+    }
+
+    /// <summary>
+    /// Starts saving the game state to disk right away or at the next possible opening, if a save/load operation is already happening.
+    /// Overwrites the save file associated with an existing <see cref="SaveMetas"/> entry. This cannot be undone.
+    /// </summary>
+    /// <param name="index">The index of the <see cref="SaveMetas"/> entry to overwrite</param>
+    /// <param name="customMetaData">Container for game-specific meta data</param>
+    public void RequestGameSaveOverwrite(int index, object customMetaData = null)
+    {
+        lock (saveLock)
+        {
+            string oldSave = SaveMetas[index].SaveName;
+            SaveMeta saveMeta = GetSaveMeta(SaveMetas[index].DisplayName, customMetaData);
+
+            pendingGameSave = () => SaveGameOverwrite(saveMeta, index);
+            pendingGameDelete = () => DeleteFileFromDisk(oldSave);
+
             StartTaskQueue();
         }
     }
@@ -237,9 +258,28 @@ public class SaveManager : GamePlugin
 
         lock (saveLock)
         {
-            pendingGameSave = () => SaveGameToDisk(null, null, true);
+            SaveMeta saveMeta = GetSaveMeta(null, null, true);
+            pendingGameSave = () => SaveGame(saveMeta);
             StartTaskQueue();
         }
+    }
+
+    /// <summary>Creates a new save meta object, containing the lastest meta data</summary>
+    /// <param name="savegameName">The display name of the save. Defaults to 'Auto-Save'.</param>
+    /// <param name="customMetaData">Container for custom meta data</param>
+    /// <param name="isAutoSave">Indicator if this save operation was dispatched by the auto save feature</param>
+    /// <returns>SaveMeta</returns>
+    private SaveMeta GetSaveMeta(string savegameName, object customMetaData = null, bool isAutoSave = false)
+    {
+        return new()
+        {
+            DisplayName = savegameName,
+            SaveName = Guid.NewGuid().ToString(),
+            SaveDate = DateTime.UtcNow,
+            SaveVersion = SaveSettings.SavegameVersion,
+            CustomData = customMetaData,
+            IsAutoSave = isAutoSave
+        };
     }
 
     #endregion
@@ -305,12 +345,29 @@ public class SaveManager : GamePlugin
 
     #region async Tasks
 
-    /// <summary>Writes a savegame to disk. Invokes OnSaving before starting and OnSaved after finishing the write operation.</summary>
-    /// <param name="savegameName">The display name of the save. Defaults to 'Auto-Save'.</param>
-    /// <param name="customMetaData">Container for custom meta data</param>
-    /// <param name="isAutoSave">Indicator if this save operation was dispatched by the auto save feature</param>
+    /// <summary>Utility method for saving a game state to a new file on disk and updating the <see cref="SaveMetas"/> entries</summary>
+    /// <param name="newMeta">The generated SaveMeta object, containing metadata of the savegame</param>
     /// <returns>Task</returns>
-    private async Task SaveGameToDisk(string savegameName = null, object customMetaData = null, bool isAutoSave = false)
+    private async Task SaveGame(SaveMeta newMeta)
+    {
+        SaveMetas.Add(newMeta);
+        await SaveGameToDisk(newMeta);
+    }
+
+    /// <summary>Utility method for saving a game state to an existing file on disk and updating the <see cref="SaveMetas"/> entries</summary>
+    /// <param name="newMeta">The generated SaveMeta object, containing metadata of the savegame</param>
+    /// <param name="index">The index of the <see cref="SaveMetas"/> entry to overwrite</param>
+    /// <returns>Task</returns>
+    private async Task SaveGameOverwrite(SaveMeta newMeta, int index)
+    {
+        SaveMetas[index] = newMeta;
+        await SaveGameToDisk(newMeta);
+    }
+
+    /// <summary>Writes a savegame to disk. Invokes OnSaving before starting and OnSaved after finishing the write operation.</summary>
+    /// <param name="newMeta">The generated SaveMeta object, containing metadata of the savegame</param>
+    /// <returns>Task</returns>
+    private async Task SaveGameToDisk(SaveMeta newMeta)
     {
         // Nothing to save
         if (OnSaving == null)
@@ -327,23 +384,15 @@ public class SaveManager : GamePlugin
             catch (Exception ex) { Debug.LogException(ex); }
         }
 
-        string saveName = Guid.NewGuid().ToString();
-
-        // Update meta data
-        SaveMeta newMeta = new()
+        // Safety precautions, this will avoid issues, should an user-defined thread still write to ActiveSaveData
+        Dictionary<Guid, string> snapshot;
+        lock (saveLock)
         {
-            DisplayName = savegameName,
-            SaveName = saveName,
-            SaveDate = DateTime.UtcNow,
-            SaveVersion = SaveSettings.SavegameVersion,
-            CustomData = customMetaData,
-            IsAutoSave = isAutoSave
-        };
-
-        SaveMetas.Add(newMeta);
+            snapshot = new Dictionary<Guid, string>(ActiveSaveData);
+        }
 
         // Write to disk
-        IOOpertation saveIO = new() { Path = SaveSettings.GetSaveFilePath(saveName), Data = ActiveSaveData };
+        IOOpertation saveIO = new() { Path = SaveSettings.GetSaveFilePath(newMeta.SaveName), Data = snapshot };
         Task saveWrite = FileIO.WriteToDisk(saveIO);
 
         IOOpertation metaIO = new() { Path = SaveSettings.SavegameMetaFile, Data = SaveMetas };
@@ -387,10 +436,11 @@ public class SaveManager : GamePlugin
         {
             IOOpertation saveIO = new() { Path = SaveSettings.GetSaveFilePath(saveName) };
             Dictionary<Guid, string> readTask = await FileIO.ReadFromDisk<Dictionary<Guid, string>>(saveIO);
-            ActiveSaveData = readTask;
-
+            
             Scripting.InvokeOnUpdate(() =>
             {
+                ActiveSaveData = readTask;
+
                 InvokeActionQueue(onLoadedOnce);
                 OnLoaded?.Invoke();
             });
